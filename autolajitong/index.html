@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AutoLajiTong: Tecnología autónoma para la recolección inteligente de residuos que dignifica el trabajo y protege el medio ambiente.">
+  <meta name="theme-color" content="#35403a">
+  <title>AutoLajiTong – Tecnología Autónoma para la Dignificación Laboral y Ambiental</title>
+
+  <!-- Google Fonts: Cormorant Garamond ≈ Walbaum Display | DM Sans ≈ Aptos Light -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+
+  <style>
+    /* =============================================
+       RESET & BASE
+    ============================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* =============================================
+       CSS VARIABLES — paleta original + ajustes
+       Contraste #35403a/#f6f4f2 = 9.76:1 (WCAG AAA ✓)
+    ============================================= */
+    :root {
+      --bg:         #f6f4f2;
+      --bg-alt:     #edecea;
+      --bg-dark:    #35403a;
+      --text:       #35403a;
+      --text-light: #f6f4f2;
+      --accent-mid: #4a6051;  /* ratio 5.78:1 sobre bg ✓ */
+      --border:     rgba(53,64,58,.15);
+      --border-dk:  rgba(246,244,242,.12);
+
+      --ff-display: 'Cormorant Garamond', Georgia, serif;
+      --ff-body:    'DM Sans', system-ui, sans-serif;
+
+      --sz-xs:  .75rem;
+      --sz-sm:  .875rem;
+      --sz-md:  1rem;
+      --sz-lg:  1.125rem;
+      --sz-xl:  1.375rem;
+      --sz-2xl: 2rem;
+      --sz-3xl: 2.75rem;
+      --sz-4xl: 3.5rem;
+      --sz-5xl: 5rem;
+
+      --sp-1: .25rem; --sp-2:.5rem;  --sp-3:.75rem;  --sp-4:1rem;
+      --sp-5:1.25rem; --sp-6:1.5rem; --sp-8:2rem;    --sp-10:2.5rem;
+      --sp-12:3rem;   --sp-16:4rem;  --sp-20:5rem;   --sp-24:6rem;
+
+      --rad: .25rem;  --rad-lg:.75rem;
+      --tr: 250ms cubic-bezier(.4,0,.2,1);
+      --nav-h: 68px;
+      --max-w: 1180px;
+    }
+
+    /* =============================================
+       ACCESSIBILITY: SKIP LINK (POUR–Operable)
+    ============================================= */
+    .skip-link {
+      position: absolute;
+      top: -100%;
+      left: var(--sp-4);
+      z-index: 9999;
+      padding: var(--sp-3) var(--sp-6);
+      background: var(--bg-dark);
+      color: var(--text-light);
+      font-family: var(--ff-body);
+      font-size: var(--sz-sm);
+      font-weight: 500;
+      border-radius: var(--rad);
+      text-decoration: none;
+      transition: top var(--tr);
+    }
+    .skip-link:focus { top: var(--sp-4); }
+
+    /* =============================================
+       FOCUS STATES (POUR–Operable / Perceivable)
+    ============================================= */
+    :focus-visible {
+      outline: 3px solid var(--bg-dark);
+      outline-offset: 3px;
+      border-radius: var(--rad);
+    }
+    /* High-contrast focus on dark backgrounds */
+    .problem :focus-visible,
+    .revenue :focus-visible,
+    .remote :focus-visible,
+    footer :focus-visible { outline-color: var(--text-light); }
+
+    /* =============================================
+       REDUCED MOTION (POUR–Operable)
+    ============================================= */
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+
+    /* =============================================
+       BASE
+    ============================================= */
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--ff-body);
+      font-weight: 300;
+      font-size: var(--sz-md);
+      line-height: 1.72;
+      color: var(--text);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Typography scale (POUR–Perceivable: clear hierarchy) */
+    h1,h2,h3,h4 {
+      font-family: var(--ff-display);
+      font-weight: 600;
+      line-height: 1.12;
+      color: var(--text);
+    }
+    p { max-width: 68ch; }
+
+    img { max-width: 100%; display: block; }
+
+    /* =============================================
+       LAYOUT
+    ============================================= */
+    .container { max-width: var(--max-w); margin-inline: auto; padding-inline: var(--sp-6); }
+
+    section { padding-block: var(--sp-24); }
+
+    /* =============================================
+       NAV (POUR–Operable: keyboard, ARIA)
+    ============================================= */
+    .nav {
+      position: fixed;
+      inset-block-start: 0; inset-inline: 0;
+      height: var(--nav-h);
+      background: rgba(246,244,242,.95);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+    }
+    .nav__inner {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav__logo {
+      font-family: var(--ff-display);
+      font-size: var(--sz-xl);
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+      letter-spacing: -.01em;
+      transition: opacity var(--tr);
+    }
+    .nav__logo:hover { opacity: .65; }
+
+    .nav__links {
+      display: flex;
+      list-style: none;
+      gap: var(--sp-8);
+    }
+    .nav__links a {
+      font-size: var(--sz-xs);
+      font-weight: 400;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text);
+      text-decoration: none;
+      opacity: .6;
+      transition: opacity var(--tr);
+    }
+    .nav__links a:hover { opacity: 1; }
+
+    /* Mobile toggle */
+    .nav__toggle {
+      display: none;
+      background: none;
+      border: 2px solid var(--border);
+      border-radius: var(--rad);
+      padding: var(--sp-2);
+      cursor: pointer;
+      color: var(--text);
+      line-height: 0;
+    }
+
+    @media (max-width: 720px) {
+      .nav__toggle { display: flex; align-items: center; justify-content: center; }
+      .nav__links {
+        display: none;
+        position: absolute;
+        top: var(--nav-h);
+        inset-inline: 0;
+        background: var(--bg);
+        flex-direction: column;
+        gap: var(--sp-1);
+        padding: var(--sp-4) var(--sp-6) var(--sp-6);
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 8px 24px rgba(53,64,58,.08);
+      }
+      .nav__links.open { display: flex; }
+      .nav__links a { font-size: var(--sz-sm); padding-block: var(--sp-3); }
+    }
+
+    /* =============================================
+       HERO
+    ============================================= */
+    .hero {
+      min-height: 100svh;
+      padding-top: var(--nav-h);
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 55% 55% at 78% 42%, rgba(53,64,58,.07) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 60% at 18% 72%, rgba(53,64,58,.04) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .hero__grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-16);
+      align-items: center;
+      padding-block: var(--sp-20);
+    }
+    .hero__chip {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-2);
+      font-size: var(--sz-xs);
+      font-weight: 500;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent-mid);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: var(--sp-2) var(--sp-4);
+      margin-bottom: var(--sp-6);
+      animation: fadeUp .6s ease both;
+    }
+    .hero__title {
+      font-size: clamp(var(--sz-3xl), 5vw, var(--sz-5xl));
+      letter-spacing: -.025em;
+      margin-bottom: var(--sp-6);
+      animation: fadeUp .7s .08s ease both;
+    }
+    .hero__title em { font-style: italic; color: var(--accent-mid); }
+    .hero__sub {
+      font-size: var(--sz-lg);
+      font-weight: 300;
+      line-height: 1.8;
+      opacity: .75;
+      max-width: 52ch;
+      margin-bottom: var(--sp-10);
+      animation: fadeUp .7s .16s ease both;
+    }
+    .hero__cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--sp-3);
+      animation: fadeUp .7s .24s ease both;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-2);
+      padding: var(--sp-4) var(--sp-8);
+      font-family: var(--ff-body);
+      font-size: var(--sz-sm);
+      font-weight: 500;
+      letter-spacing: .04em;
+      text-decoration: none;
+      border-radius: var(--rad);
+      transition: all var(--tr);
+      border: none;
+      cursor: pointer;
+    }
+    .btn--solid {
+      background: var(--bg-dark);
+      color: var(--text-light);
+    }
+    .btn--solid:hover { background: var(--accent-mid); transform: translateY(-1px); }
+    .btn--ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1.5px solid var(--border);
+    }
+    .btn--ghost:hover { border-color: var(--text); background: rgba(53,64,58,.05); }
+
+    /* Hero visual */
+    .hero__visual {
+      animation: fadeUp .8s .2s ease both;
+    }
+    .hero__frame {
+      aspect-ratio: 1;
+      max-width: 480px;
+      margin-inline: auto;
+      background: var(--bg-alt);
+      border-radius: var(--rad-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+    .hero__frame::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 65% 35%, rgba(53,64,58,.07) 0%, transparent 60%);
+    }
+
+    @media (max-width: 900px) {
+      .hero__grid { grid-template-columns: 1fr; text-align: center; }
+      .hero__visual { order: -1; }
+      .hero__sub { margin-inline: auto; }
+      .hero__cta { justify-content: center; }
+    }
+    @media (max-width: 480px) {
+      .hero__grid { padding-block: var(--sp-12); }
+    }
+
+    /* =============================================
+       SECTION HEADER HELPERS
+    ============================================= */
+    .sh { margin-bottom: var(--sp-16); }
+    .sh--center { text-align: center; }
+    .sh--center .sh__sub { margin-inline: auto; }
+
+    .sh__label {
+      display: inline-block;
+      font-size: var(--sz-xs);
+      font-weight: 500;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--accent-mid);
+      margin-bottom: var(--sp-3);
+    }
+    .sh__title {
+      font-size: clamp(var(--sz-2xl), 3.5vw, var(--sz-4xl));
+      letter-spacing: -.022em;
+      margin-bottom: var(--sp-4);
+    }
+    .sh__sub {
+      font-size: var(--sz-lg);
+      font-weight: 300;
+      line-height: 1.78;
+      opacity: .75;
+      max-width: 60ch;
+      margin-bottom: 0;
+    }
+
+    /* Dark section overrides */
+    .dark .sh__label { color: rgba(246,244,242,.55); }
+    .dark .sh__title { color: var(--text-light); }
+    .dark .sh__sub   { color: rgba(246,244,242,.65); }
+
+    /* =============================================
+       PROBLEMA
+    ============================================= */
+    .problem { background: var(--bg-dark); }
+    .problem__cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-6);
+    }
+    @media (max-width: 600px) { .problem__cards { grid-template-columns: 1fr; } }
+
+    .pcard {
+      padding: var(--sp-8);
+      background: rgba(246,244,242,.05);
+      border: 1px solid var(--border-dk);
+      border-radius: var(--rad-lg);
+    }
+    .pcard__icon {
+      width: 44px; height: 44px;
+      color: rgba(246,244,242,.45);
+      margin-bottom: var(--sp-5);
+    }
+    .pcard h3 { font-size: var(--sz-xl); color: var(--text-light); margin-bottom: var(--sp-3); }
+    .pcard p  { color: rgba(246,244,242,.65); line-height: 1.76; }
+
+    /* =============================================
+       VALUE PROP / SOLUCIÓN
+    ============================================= */
+    .vp__cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-5);
+    }
+    @media (max-width: 768px) { .vp__cards { grid-template-columns: 1fr; } }
+
+    .vpcard {
+      padding: var(--sp-8);
+      background: var(--bg-alt);
+      border-radius: var(--rad-lg);
+      position: relative;
+    }
+    .vpcard::before {
+      content: '';
+      position: absolute;
+      inset-block-start: 0;
+      inset-inline: 0;
+      height: 3px;
+      background: var(--bg-dark);
+      border-radius: var(--rad-lg) var(--rad-lg) 0 0;
+    }
+    .vpcard__num {
+      font-family: var(--ff-display);
+      font-size: 3.5rem;
+      font-weight: 300;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: var(--sp-4);
+      user-select: none;
+    }
+    .vpcard h3 { font-size: var(--sz-xl); margin-bottom: var(--sp-3); }
+    .vpcard p  { font-size: var(--sz-md); opacity: .78; line-height: 1.7; }
+
+    /* =============================================
+       STATS ROW
+    ============================================= */
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--sp-2);
+      padding-block: var(--sp-12);
+      border-block: 1px solid var(--border);
+    }
+    .stat {
+      flex: 1;
+      min-width: 140px;
+      padding-inline: var(--sp-2);
+    }
+    .stat__n {
+      font-family: var(--ff-display);
+      font-size: clamp(3rem, 5vw, 5rem);
+      font-weight: 300;
+      line-height: 1;
+      letter-spacing: -.025em;
+      display: block;
+      margin-bottom: var(--sp-2);
+    }
+    .stat__l {
+      font-size: var(--sz-xs);
+      font-weight: 400;
+      letter-spacing: .04em;
+      opacity: .55;
+      text-transform: uppercase;
+    }
+
+    /* =============================================
+       INTERACTION CARDS
+    ============================================= */
+    .ic__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--sp-5);
+      margin-top: var(--sp-12);
+    }
+    @media (max-width: 768px) { .ic__grid { grid-template-columns: 1fr; } }
+
+    .iccard {
+      padding: var(--sp-6);
+      border: 1px solid var(--border);
+      border-radius: var(--rad-lg);
+    }
+    .iccard__dot {
+      width: 38px; height: 38px;
+      background: var(--bg-dark);
+      border-radius: var(--rad);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-light);
+      margin-bottom: var(--sp-4);
+    }
+    .iccard h3 { font-size: var(--sz-lg); margin-bottom: var(--sp-2); }
+    .iccard p  { font-size: var(--sz-sm); opacity: .72; line-height: 1.7; }
+
+    /* =============================================
+       TARGET GROUP
+    ============================================= */
+    .target { background: var(--bg-alt); }
+    .target__grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-16);
+      align-items: start;
+    }
+    @media (max-width: 768px) { .target__grid { grid-template-columns: 1fr; } }
+
+    .tcard {
+      padding: var(--sp-8);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--rad-lg);
+      margin-bottom: var(--sp-4);
+    }
+    .tcard:last-child { margin-bottom: 0; }
+    .tcard__tag {
+      display: inline-block;
+      font-size: var(--sz-xs);
+      font-weight: 500;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      background: var(--bg-dark);
+      color: var(--text-light);
+      padding: var(--sp-1) var(--sp-3);
+      border-radius: 100px;
+      margin-bottom: var(--sp-4);
+    }
+    .tcard h3 { font-size: var(--sz-xl); margin-bottom: var(--sp-3); }
+    .tcard p  { font-size: var(--sz-md); opacity: .78; line-height: 1.7; }
+
+    /* =============================================
+       REMOTE ZONES
+    ============================================= */
+    .remote { background: var(--bg-dark); }
+    .remote__grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-12);
+    }
+    @media (max-width: 600px) { .remote__grid { grid-template-columns: 1fr; } }
+
+    .ritem h3 { font-size: var(--sz-xl); color: var(--text-light); margin-bottom: var(--sp-3); }
+    .ritem p  { color: rgba(246,244,242,.65); line-height: 1.76; }
+
+    /* =============================================
+       REVENUE
+    ============================================= */
+    .revenue__cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-6);
+    }
+    @media (max-width: 600px) { .revenue__cards { grid-template-columns: 1fr; } }
+
+    .revcard {
+      padding: var(--sp-10) var(--sp-8);
+      border: 1px solid var(--border);
+      border-radius: var(--rad-lg);
+    }
+    .revcard h3 { font-size: var(--sz-2xl); margin-bottom: var(--sp-3); }
+    .revcard p  { opacity: .75; line-height: 1.7; }
+
+    /* =============================================
+       SCALABILITY / PHASES
+    ============================================= */
+    .phases {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .phases::before {
+      content: '';
+      position: absolute;
+      inset-inline-start: 23px;
+      inset-block: 0;
+      width: 1px;
+      background: var(--border);
+    }
+    .phase {
+      display: flex;
+      gap: var(--sp-8);
+      align-items: flex-start;
+      padding-block: var(--sp-8);
+    }
+    .phase__dot {
+      flex-shrink: 0;
+      width: 48px; height: 48px;
+      background: var(--bg-dark);
+      color: var(--text-light);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--ff-display);
+      font-size: var(--sz-xl);
+      font-weight: 600;
+      position: relative; z-index: 1;
+    }
+    .phase__body h3 { font-size: var(--sz-xl); margin-bottom: var(--sp-2); }
+    .phase__body p  { opacity: .72; line-height: 1.7; }
+
+    /* =============================================
+       POUR SECTION
+    ============================================= */
+    .pour { background: var(--bg-alt); }
+    .pour__grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-6);
+    }
+    @media (max-width: 640px) { .pour__grid { grid-template-columns: 1fr; } }
+
+    .pourcard {
+      padding: var(--sp-8);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--rad-lg);
+    }
+    .pourcard__letter {
+      font-family: var(--ff-display);
+      font-size: 4.5rem;
+      font-weight: 300;
+      color: var(--border);
+      line-height: 1;
+      margin-bottom: var(--sp-3);
+      user-select: none;
+    }
+    .pourcard h3 { font-size: var(--sz-xl); margin-bottom: var(--sp-3); }
+    .pourcard p  { font-size: var(--sz-md); opacity: .75; line-height: 1.7; margin-bottom: var(--sp-4); }
+    .pourcard ul { padding-inline-start: var(--sp-4); }
+    .pourcard li {
+      font-size: var(--sz-sm);
+      line-height: 1.75;
+      opacity: .7;
+      margin-bottom: var(--sp-1);
+    }
+
+    /* Palette note */
+    .palette-note {
+      margin-top: var(--sp-12);
+      padding: var(--sp-6) var(--sp-8);
+      background: var(--bg);
+      border-radius: var(--rad-lg);
+      border-inline-start: 3px solid var(--bg-dark);
+    }
+    .palette-note h3 { font-size: var(--sz-lg); margin-bottom: var(--sp-3); }
+    .palette-note p  { font-size: var(--sz-sm); opacity: .78; line-height: 1.8; }
+    .palette-note strong { font-weight: 500; }
+
+    /* Contrast visual */
+    .contrast-demo {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-3);
+      margin-top: var(--sp-4);
+      flex-wrap: wrap;
+    }
+    .cswatch {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-2);
+      padding: var(--sp-2) var(--sp-4);
+      border-radius: var(--rad);
+      font-size: var(--sz-xs);
+      font-weight: 500;
+      letter-spacing: .04em;
+    }
+    .cswatch--light { background: #f6f4f2; color: #35403a; border: 1px solid #d0ceca; }
+    .cswatch--dark  { background: #35403a; color: #f6f4f2; }
+    .cswatch__badge {
+      display: inline-block;
+      background: #2d7a3a;
+      color: #fff;
+      padding: 1px 8px;
+      border-radius: 100px;
+      font-size: .65rem;
+    }
+
+    /* =============================================
+       FOOTER
+    ============================================= */
+    footer {
+      background: var(--bg-dark);
+      padding-block: var(--sp-12);
+      border-top: 1px solid var(--border-dk);
+    }
+    .foot__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--sp-6);
+    }
+    .foot__brand {
+      font-family: var(--ff-display);
+      font-size: var(--sz-xl);
+      font-weight: 600;
+      color: var(--text-light);
+      display: block;
+      margin-bottom: var(--sp-1);
+    }
+    .foot__sub { font-size: var(--sz-sm); color: rgba(246,244,242,.5); }
+    .foot__meta { font-size: var(--sz-xs); color: rgba(246,244,242,.4); text-align: right; line-height: 1.9; }
+
+    /* =============================================
+       DIVIDER
+    ============================================= */
+    .divider { height: 1px; background: var(--border); margin-block: var(--sp-12); }
+
+    /* Sub section heading inside section */
+    .sec-h2 { font-size: var(--sz-2xl); letter-spacing: -.02em; margin-bottom: var(--sp-3); }
+
+    /* =============================================
+       ANIMATIONS
+    ============================================= */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ======================================================
+       POUR – Operable: skip link for keyboard / screen reader
+  ======================================================= -->
+  <a class="skip-link" href="#contenido-principal">Saltar al contenido principal</a>
+
+  <!-- ======================================================
+       NAV – POUR Robust: landmarks + ARIA
+  ======================================================= -->
+  <nav class="nav" role="navigation" aria-label="Navegación principal">
+    <div class="container">
+      <div class="nav__inner">
+
+        <a class="nav__logo" href="#inicio" aria-label="AutoLajiTong – ir al inicio">
+          AutoLajiTong
+        </a>
+
+        <!-- POUR – Operable: aria-expanded, aria-controls en botón móvil -->
+        <button
+          class="nav__toggle"
+          id="menuBtn"
+          aria-expanded="false"
+          aria-controls="navLinks"
+          aria-label="Abrir menú de navegación"
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+
+        <ul class="nav__links" id="navLinks" role="list">
+          <li role="listitem"><a href="#problema">El Problema</a></li>
+          <li role="listitem"><a href="#solucion">Solución</a></li>
+          <li role="listitem"><a href="#modelo">Modelo</a></li>
+          <li role="listitem"><a href="#escalabilidad">Escalabilidad</a></li>
+          <li role="listitem"><a href="#pour">Accesibilidad POUR</a></li>
+        </ul>
+
+      </div>
+    </div>
+  </nav>
+
+  <!-- ======================================================
+       MAIN – POUR Robust: landmark <main>
+  ======================================================= -->
+  <main id="contenido-principal">
+
+    <!-- ================================================
+         HERO
+    ================================================= -->
+    <header id="inicio" class="hero" role="banner">
+      <div class="container">
+        <div class="hero__grid">
+
+          <!-- Text content -->
+          <div>
+            <span class="hero__chip" aria-label="Categoría: Diseñar para compartir 2026">
+              <!-- decorative dot -->
+              <span style="width:6px;height:6px;border-radius:50%;background:var(--accent-mid);flex-shrink:0;" aria-hidden="true"></span>
+              Diseñar para Compartir · 2026
+            </span>
+
+            <h1 class="hero__title">
+              Tecnología <em>Autónoma</em> para la Dignificación Laboral y Ambiental
+            </h1>
+
+            <p class="hero__sub">
+              AutoLajiTong redefine la recolección de residuos mediante vehículos autónomos con IA, transformando un trabajo históricamente peligroso en una labor digna y tecnológica.
+            </p>
+
+            <div class="hero__cta">
+              <a class="btn btn--solid" href="#solucion">Conocer la solución</a>
+              <a class="btn btn--ghost" href="#modelo">Ver modelo de negocio</a>
+            </div>
+          </div>
+
+          <!-- Visual / SVG illustration -->
+          <!-- POUR – Perceivable: aria-hidden en ilustración decorativa -->
+          <div class="hero__visual">
+            <div class="hero__frame" aria-hidden="true">
+              <img src="https://raw.githubusercontent.com/NestorNey/nestorney.github.io/refs/heads/main/access/media/images/0cc4fe22-0a53-43dd-af3c-052880601038.png" />
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </header><!-- /hero -->
+
+    <!-- ================================================
+         PROBLEMA
+    ================================================= -->
+    <section id="problema" class="problem dark" aria-labelledby="h-problema">
+      <div class="container">
+        <header class="sh">
+          <span class="sh__label">El Problema</span>
+          <h2 id="h-problema" class="sh__title">Dos problemas urgentes sin resolver</h2>
+          <p class="sh__sub">La recolección de residuos enfrenta una crisis humana y ambiental que el modelo tradicional ya no puede solucionar.</p>
+        </header>
+
+        <div class="problem__cards">
+          <article class="pcard">
+            <!-- POUR – Perceivable: aria-hidden en ícono decorativo -->
+            <svg class="pcard__icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"
+                 aria-hidden="true" focusable="false">
+              <circle cx="24" cy="24" r="20"/>
+              <line x1="24" y1="14" x2="24" y2="27"/>
+              <circle cx="24" cy="33" r="1.8" fill="currentColor"/>
+            </svg>
+            <h3>Riesgo Laboral y Sanitario</h3>
+            <p>Los trabajadores de recolección —formales e informales— están expuestos diariamente a focos de infección, materiales peligrosos y condiciones insalubres que merman su esperanza y calidad de vida.</p>
+          </article>
+
+          <article class="pcard">
+            <svg class="pcard__icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"
+                 aria-hidden="true" focusable="false">
+              <path d="M24 6L44 42H4L24 6Z"/>
+              <line x1="24" y1="20" x2="24" y2="32"/>
+              <circle cx="24" cy="37" r="1.8" fill="currentColor"/>
+            </svg>
+            <h3>Contaminación en Zonas Remotas</h3>
+            <p>La recolección tradicional es ineficiente en áreas de difícil acceso, provocando acumulación prolongada de residuos y grave contaminación de suelo y agua en comunidades vulnerables.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================
+         SOLUCIÓN / VALOR
+    ================================================= -->
+    <section id="solucion" aria-labelledby="h-solucion">
+      <div class="container">
+        <header class="sh">
+          <span class="sh__label">Promesa de Valor</span>
+          <h2 id="h-solucion" class="sh__title">Tres pilares de transformación</h2>
+          <p class="sh__sub">AutoLajiTong integra tecnología autónoma e inteligencia artificial para resolver la crisis de residuos desde la raíz.</p>
+        </header>
+
+        <div class="vp__cards">
+          <article class="vpcard">
+            <div class="vpcard__num" aria-hidden="true">01</div>
+            <h3>Para el Trabajador</h3>
+            <p>Evolución laboral con cero contacto directo con agentes infecciosos. Los trabajadores se convierten en operadores tecnológicos, mejorando su salud y dignidad social.</p>
+          </article>
+
+          <article class="vpcard">
+            <div class="vpcard__num" aria-hidden="true">02</div>
+            <h3>Para el Medio Ambiente</h3>
+            <p>Contenedores inteligentes que alertan cuando están llenos, evitando derrames. Clasificación automática que maximiza el reciclaje y reduce la contaminación al mínimo.</p>
+          </article>
+
+          <article class="vpcard">
+            <div class="vpcard__num" aria-hidden="true">03</div>
+            <h3>Innovación Tecnológica</h3>
+            <p>Microcontroladores y cámaras de IA con visión computacional para detección y clasificación automática. Tracción especial para zonas remotas inaccesibles para camiones convencionales.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================
+         MODELO DE NEGOCIO
+    ================================================= -->
+    <section id="modelo" aria-labelledby="h-modelo">
+      <div class="container">
+
+        <header class="sh">
+          <span class="sh__label">Modelo de Negocio</span>
+          <h2 id="h-modelo" class="sh__title">Inclusivo, centrado en las personas</h2>
+          <p class="sh__sub">El objetivo no es reemplazar la mano de obra, sino evolucionar su rol. El trabajador se transforma en operador tecnológico, dignificando su labor.</p>
+        </header>
+
+        <!-- Stats row (POUR: aria-label da contexto al grupo de estadísticas) -->
+        <div class="stats" role="region" aria-label="Indicadores clave del proyecto AutoLajiTong">
+          <div class="stat">
+            <span class="stat__n">0</span>
+            <span class="stat__l">Contacto físico directo con residuos</span>
+          </div>
+          <div class="stat">
+            <span class="stat__n">3</span>
+            <span class="stat__l">Fases de expansión proyectadas</span>
+          </div>
+          <div class="stat">
+            <span class="stat__n">360°</span>
+            <span class="stat__l">Cobertura urbana y remota</span>
+          </div>
+          <div class="stat">
+            <span class="stat__n">IA</span>
+            <span class="stat__l">Clasificación automática de residuos</span>
+          </div>
+        </div>
+
+        <div class="divider" role="separator" aria-hidden="true"></div>
+
+        <!-- Interaction sub-section -->
+        <h3 id="h-interaction" class="sec-h2" style="margin-top: var(--sp-12)">
+          Formas de colaboración con los trabajadores
+        </h3>
+        <p style="max-width:62ch; opacity:.72; margin-bottom:var(--sp-6)">
+          La transición tecnológica se apoya en tres mecanismos pensados para que ningún trabajador quede atrás.
+        </p>
+
+        <div class="ic__grid" role="list" aria-labelledby="h-interaction">
+          <article class="iccard" role="listitem">
+            <div class="iccard__dot" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            </div>
+            <h3>Capacitación Técnica Remunerada</h3>
+            <p>Se supera la barrera económica y educativa mediante entrenamiento en horario laboral usando simuladores visuales tipo bloques (sin manuales complejos) para transitar de recolector a operador técnico.</p>
+          </article>
+
+          <article class="iccard" role="listitem">
+            <div class="iccard__dot" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            </div>
+            <h3>Comités de Mapeo Participativo</h3>
+            <p>Se rompe la barrera cultural de desconfianza mediante juntas horizontales en la comunidad, compensando el tiempo de los trabajadores mientras ellos mismos trazan las mejores rutas para el sistema.</p>
+          </article>
+
+          <article class="iccard" role="listitem">
+            <div class="iccard__dot" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
+            </div>
+            <h3>Soporte con Diseño POUR</h3>
+            <p>Se elimina la barrera tecnológica e infraestructura con una interfaz offline que sincroniza en base, operada mediante comandos de voz simples, iconografía de alto contraste y alertas auditivas o por vibración.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================
+         GRUPO OBJETIVO
+    ================================================= -->
+    <section id="audiencia" class="target" aria-labelledby="h-audiencia">
+      <div class="container">
+        <div class="target__grid">
+
+          <div>
+            <header class="sh">
+              <span class="sh__label">Grupo Objetivo</span>
+              <h2 id="h-audiencia" class="sh__title">¿A quiénes va dirigido?</h2>
+            </header>
+            <p style="opacity:.78; line-height:1.8; margin-bottom:var(--sp-5)">
+              Trabajadores actuales del sistema de recolección formal e informal, y pepenadores. Hombres y mujeres entre 18 y 60 años, pertenecientes a sectores de ingresos bajos a medios.
+            </p>
+            <p style="opacity:.78; line-height:1.8">
+              Son personas con disposición al aprendizaje cuando el cambio garantiza la salud de sus familias y un futuro laboral con mayor reconocimiento social.
+            </p>
+          </div>
+
+          <div>
+            <article class="tcard">
+              <span class="tcard__tag">Perfil Demográfico</span>
+              <h3>18–60 años · ingresos bajos a medios</h3>
+              <p>Trabajadores formales, informales y pepenadores en zonas urbanas y rurales que requieren un servicio de recolección digno y seguro.</p>
+            </article>
+            <article class="tcard">
+              <span class="tcard__tag">Perfil Psicológico</span>
+              <h3>Buscan seguridad, estabilidad y dignidad</h3>
+              <p>Personas históricamente estigmatizadas por su trabajo, motivadas a aprender nuevas habilidades cuando el cambio mejora la salud de sus familias.</p>
+            </article>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================
+         ZONAS REMOTAS
+    ================================================= -->
+    <section id="zonas-remotas" class="remote dark" aria-labelledby="h-remote">
+      <div class="container">
+        <header class="sh">
+          <span class="sh__label">Beneficio en Zonas Remotas</span>
+          <h2 id="h-remote" class="sh__title">Llegando donde otros no pueden</h2>
+          <p class="sh__sub">Los vehículos AutoLajiTong pueden desplegarse permanentemente en comunidades marginadas inaccesibles para los camiones tradicionales.</p>
+        </header>
+        <div class="remote__grid">
+          <div class="ritem">
+            <h3>Descentralización del Servicio</h3>
+            <p>Vehículos autónomos y optimizados que pueden permanecer de forma continua en comunidades rurales o marginadas, llevando el servicio a quienes más lo necesitan.</p>
+          </div>
+          <div class="ritem">
+            <h3>Prevención de Contaminación</h3>
+            <p>Se erradican los tiraderos clandestinos en barrancas y periferias, protegiendo los mantos acuíferos locales y mejorando directamente la salud pública de los habitantes.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================
+         INGRESOS
+    ================================================= -->
+    <section id="ingresos" aria-labelledby="h-ingresos">
+      <div class="container">
+        <header class="sh">
+          <span class="sh__label">Modelos de Ingresos</span>
+          <h2 id="h-ingresos" class="sh__title">Dos fuentes de sustentabilidad financiera</h2>
+          <p class="sh__sub">Un modelo mixto que combina financiamiento público con economía circular para garantizar la viabilidad a largo plazo.</p>
+        </header>
+        <div class="revenue__cards">
+          <article class="revcard">
+            <h3>Financiamiento Mixto</h3>
+            <p>Obtención de fondos a través de presupuestos de gobiernos locales y nacionales, complementados con apoyo de fundaciones ecologistas que buscan soluciones innovadoras de manejo de residuos.</p>
+          </article>
+          <article class="revcard">
+            <h3>Economía Circular</h3>
+            <p>Ingresos sostenidos mediante la segregación ultra precisa de materiales reciclables —gracias a visión computacional— y su venta directa a empresas de transformación de plástico, vidrio y metal.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================
+         ESCALABILIDAD
+    ================================================= -->
+    <section id="escalabilidad" aria-labelledby="h-scale" style="background:var(--bg-alt)">
+      <div class="container">
+        <header class="sh">
+          <span class="sh__label">Escalabilidad Proyectada</span>
+          <h2 id="h-scale" class="sh__title">Del piloto al modelo de franquicia social</h2>
+          <p class="sh__sub">Una expansión por fases que garantiza aprendizaje continuo y crecimiento sostenible con impacto medible en cada etapa.</p>
+        </header>
+
+        <div class="phases" role="list" aria-label="Fases de escalabilidad del proyecto AutoLajiTong">
+
+          <article class="phase" role="listitem">
+            <div class="phase__dot" aria-label="Fase 1">1</div>
+            <div class="phase__body">
+              <h3>Piloto Local</h3>
+              <p>Implementación de una flota base en una zona con alta necesidad y problemas de recolección. Se validan los algoritmos de IA, se capacita al primer grupo de operadores y se ajusta el modelo operativo con retroalimentación real.</p>
+            </div>
+          </article>
+
+          <article class="phase" role="listitem">
+            <div class="phase__dot" aria-label="Fase 2">2</div>
+            <div class="phase__body">
+              <h3>Expansión Regional</h3>
+              <p>El diseño modular del sistema y la infraestructura en la nube permiten replicar el software y los planos de construcción en otras regiones con inversión mínima adicional, escalando el impacto rápidamente.</p>
+            </div>
+          </article>
+
+          <article class="phase" role="listitem">
+            <div class="phase__dot" aria-label="Fase 3">3</div>
+            <div class="phase__body">
+              <h3>Modelo de Franquicia Social</h3>
+              <p>Transferencia del modelo a otros estados, donde gobiernos o cooperativas locales de trabajadores adquieren los AutoLajiTong, multiplicando el impacto positivo en miles de vidas y comunidades.</p>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================
+         METODOLOGÍA POUR
+    ================================================= -->
+    <section id="pour" class="pour" aria-labelledby="h-pour">
+      <div class="container">
+        <header class="sh sh--center">
+          <span class="sh__label">Metodología POUR</span>
+          <h2 id="h-pour" class="sh__title">Diseño accesible para todos</h2>
+          <p class="sh__sub">Este sitio fue diseñado siguiendo los cuatro principios POUR, garantizando accesibilidad para usuarios con distintos niveles de capacidad sensorial, motora y cognitiva.</p>
+        </header>
+
+        <div class="pour__grid">
+
+          <!-- PERCEIVABLE -->
+          <article class="pourcard" aria-labelledby="pour-p">
+            <div class="pourcard__letter" aria-hidden="true">P</div>
+            <h3 id="pour-p">
+              Perceptible
+              <small style="font-size:.7em; font-weight:300; opacity:.55; font-style:italic;">Perceivable</small>
+            </h3>
+            <p>La información se presenta de formas que todos los usuarios puedan percibir, independientemente de sus capacidades sensoriales.</p>
+            <ul>
+              <li>✔ Contraste texto/fondo: <strong>9.76:1</strong> — supera WCAG AAA (≥7:1)</li>
+              <li>✔ Todos los íconos y SVG tienen <code>aria-hidden="true"</code> o texto alternativo</li>
+              <li>✔ Jerarquía de encabezados lógica: h1 → h2 → h3 → h4</li>
+              <li>✔ Diseño 100&thinsp;% responsive adaptado a móviles, tablets y escritorio</li>
+              <li>✔ Información no depende únicamente del color para comunicar significado</li>
+            </ul>
+          </article>
+
+          <!-- OPERABLE -->
+          <article class="pourcard" aria-labelledby="pour-o">
+            <div class="pourcard__letter" aria-hidden="true">O</div>
+            <h3 id="pour-o">
+              Operable
+              <small style="font-size:.7em; font-weight:300; opacity:.55; font-style:italic;">Operable</small>
+            </h3>
+            <p>Todos los componentes de la interfaz y la navegación son utilizables por teclado y dispositivos de asistencia, sin depender del ratón.</p>
+            <ul>
+              <li>✔ Enlace "Saltar al contenido principal" visible al recibir foco</li>
+              <li>✔ Navegación completa con teclado (<kbd>Tab</kbd>, <kbd>Enter</kbd>, <kbd>Esc</kbd>)</li>
+              <li>✔ Indicadores de enfoque visibles: <code>outline: 3px solid</code> en todos los elementos interactivos</li>
+              <li>✔ Sin contenido con destellos &gt;3 veces/segundo que puedan provocar convulsiones</li>
+              <li>✔ <code>prefers-reduced-motion</code> desactiva todas las animaciones automáticamente</li>
+            </ul>
+          </article>
+
+          <!-- UNDERSTANDABLE -->
+          <article class="pourcard" aria-labelledby="pour-u">
+            <div class="pourcard__letter" aria-hidden="true">U</div>
+            <h3 id="pour-u">
+              Comprensible
+              <small style="font-size:.7em; font-weight:300; opacity:.55; font-style:italic;">Understandable</small>
+            </h3>
+            <p>El contenido y la interfaz son comprensibles para todos los usuarios, incluyendo aquellos con discapacidades cognitivas o lectores de pantalla.</p>
+            <ul>
+              <li>✔ <code>lang="es"</code> declarado en el elemento raíz para lectores de pantalla</li>
+              <li>✔ Lenguaje claro y directo, sin jerga técnica innecesaria</li>
+              <li>✔ Navegación consistente y predecible en todas las secciones</li>
+              <li>✔ Textos de enlaces descriptivos — nunca "haz clic aquí"</li>
+              <li>✔ Estructura visual coherente de sección a sección con <code>aria-labelledby</code></li>
+            </ul>
+          </article>
+
+          <!-- ROBUST -->
+          <article class="pourcard" aria-labelledby="pour-r">
+            <div class="pourcard__letter" aria-hidden="true">R</div>
+            <h3 id="pour-r">
+              Robusto
+              <small style="font-size:.7em; font-weight:300; opacity:.55; font-style:italic;">Robust</small>
+            </h3>
+            <p>El contenido es interpretado correctamente por tecnologías de asistencia actuales y futuras gracias a un marcado semántico riguroso.</p>
+            <ul>
+              <li>✔ HTML5 semántico: <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;header&gt;</code>, <code>&lt;footer&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;article&gt;</code></li>
+              <li>✔ Atributos ARIA: <code>aria-label</code>, <code>aria-labelledby</code>, <code>aria-expanded</code>, <code>aria-controls</code></li>
+              <li>✔ Roles explícitos: <code>role="navigation"</code>, <code>role="list"</code>, <code>role="banner"</code>, <code>role="region"</code></li>
+              <li>✔ Compatible con NVDA, VoiceOver y JAWS</li>
+              <li>✔ Página completamente legible sin JavaScript habilitado</li>
+            </ul>
+          </article>
+
+        </div><!-- /pour__grid -->
+
+      </div>
+    </section>
+
+  </main><!-- /main -->
+
+  <!-- ======================================================
+       FOOTER – POUR Robust: role="contentinfo"
+  ======================================================= -->
+  <footer role="contentinfo">
+    <div class="container">
+      <div class="foot__inner">
+        <div>
+          <span class="foot__brand">AutoLajiTong</span>
+          <p class="foot__sub">Tecnología autónoma para la dignificación laboral y ambiental.</p>
+        </div>
+        <div class="foot__meta" aria-label="Información del proyecto académico">
+          <p>Nestor Emmanuel Ascencio Sanchez</p>
+          <p>Diseñar para Compartir</p>
+          <p>Universidad del Valle de México · Mayo 2026</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ======================================================
+       JS — accesible: Escape cierra menú, aria-expanded
+  ======================================================= -->
+  <script>
+    (function () {
+      'use strict';
+
+      const btn   = document.getElementById('menuBtn');
+      const links = document.getElementById('navLinks');
+
+      // Toggle open/close
+      btn.addEventListener('click', function () {
+        const isOpen = links.classList.toggle('open');
+        btn.setAttribute('aria-expanded', String(isOpen));
+      });
+
+      // Close on link click (mobile)
+      links.querySelectorAll('a').forEach(function (a) {
+        a.addEventListener('click', function () {
+          links.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+        });
+      });
+
+      // POUR – Operable: Escape closes menu and returns focus
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && links.classList.contains('open')) {
+          links.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+          btn.focus();
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>
