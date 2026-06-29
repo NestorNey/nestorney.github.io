@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VacunaRed MX - Sistema Inclusivo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <style>
+        :root {
+            --primary: #2C3E50;
+            --secondary: #0E6655; /* Oscurecido para cumplir con contraste WCAG AA */
+            --focus-color: #E67E22;
+            --background: #F8F9FA;
+            --text: #333333;
+            --border: #E0E0E0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background);
+            color: var(--text);
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Enlace para saltar al contenido principal (Accesibilidad teclado) */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--focus-color);
+            color: white;
+            padding: 8px;
+            z-index: 100;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Indicador visual de foco para navegación por teclado */
+        *:focus-visible {
+            outline: 3px solid var(--focus-color);
+            outline-offset: 2px;
+        }
+
+        /* Clase para ocultar visualmente contenido, pero disponible para lectores de pantalla */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            padding: 20px 0;
+            margin: 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: white;
+            padding: 15px 20px;
+            text-align: left;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .nav-btn:hover, .nav-btn.active, .nav-btn:focus {
+            background-color: var(--secondary);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .module-section {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .module-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        /* H2 recibe el foco por JS, evitamos el outline molesto en click normal */
+        h2[tabindex="-1"]:focus {
+            outline: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px; /* Evita zoom automático en móviles */
+        }
+
+        button.btn-primary {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        button.btn-primary:hover {
+            background-color: #0b4e41; /* Mayor contraste al hover */
+        }
+        
+        button.btn-secondary {
+            background-color: #555555; /* Gris más oscuro para contraste */
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background-color: #f1f1f1;
+            font-weight: bold;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .bg-green { background-color: var(--secondary); }
+        .bg-orange { background-color: #D35400; /* Naranja oscuro para contraste */ }
+        
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: #f8f9fa;
+            border: 1px solid var(--border);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .card h3 { margin: 0; font-size: 36px; color: var(--primary); }
+        .card p { margin: 5px 0 0; color: #666; font-weight: 500; }
+        
+        .comprobante-box {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            border: 2px dashed var(--secondary);
+            border-radius: 8px;
+            text-align: center;
+            background-color: #f9fdfc;
+        }
+        
+        #qrCodeContainer {
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+    <div id="aria-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+    <nav class="sidebar" aria-label="Menú principal">
+        <h2>VacunaRed MX</h2>
+        <button class="nav-btn active" aria-current="page" onclick="showModule('mod1', this)">1. Registro</button>
+        <button class="nav-btn" onclick="showModule('mod2', this)">2. Turnos y Citas</button>
+        <button class="nav-btn" onclick="showModule('mod3', this)">3. Administración</button>
+        <button class="nav-btn" onclick="showModule('mod4', this)">4. Seguimiento</button>
+        <button class="nav-btn" onclick="showModule('mod5', this)">5. Dashboard</button>
+    </nav>
+
+    <main id="main-content" class="main-content" aria-label="Contenido de los módulos">
+        
+        <section id="mod1" class="module-section active" aria-labelledby="h2-mod1">
+            <h2 id="h2-mod1" tabindex="-1">Módulo 1 — Registro de Beneficiarios</h2>
+            <p>Captura offline/online de datos del ciudadano. Se generará un comprobante con código QR al finalizar.</p>
+            
+            <form id="registroForm" onsubmit="registrarBeneficiario(event)">
+                <div class="form-group">
+                    <label for="regNombre">Nombre Completo</label>
+                    <input type="text" id="regNombre" required aria-required="true" placeholder="Ej. Juan Pérez">
+                </div>
+                <div class="form-group">
+                    <label for="regCurp">CURP (18 caracteres)</label>
+                    <input type="text" id="regCurp" required aria-required="true" maxlength="18" placeholder="Ingrese 18 caracteres">
+                </div>
+                <div class="form-group">
+                    <label for="regPrioridad">Prioridad (Discapacidad / 60+ años)</label>
+                    <select id="regPrioridad" aria-required="true">
+                        <option value="Normal">Ninguna</option>
+                        <option value="Alta">Sí (Prioridad Alta)</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">Generar Registro y QR</button>
+            </form>
+
+            <div id="registroExito" class="comprobante-box" aria-live="polite">
+                <h3 style="color: var(--secondary); margin-top: 0;">¡Registro Exitoso!</h3>
+                <p>Folio asignado: <strong id="folioGenerado"></strong></p>
+                <p style="font-size: 14px; color: #555;">Nombre: <span id="nombreGenerado"></span></p>
+                
+                <div id="qrCodeContainer" role="img" aria-label="Código QR con el folio y datos de la persona registrada"></div>
+                
+                <p style="font-size: 12px; color: #7f8c8d;">Escanea este código para ver los datos del beneficiario.</p>
+                <button class="btn-secondary" onclick="cerrarComprobante()">Registrar a otra persona</button>
+            </div>
+        </section>
+
+        <section id="mod2" class="module-section" aria-labelledby="h2-mod2">
+            <h2 id="h2-mod2" tabindex="-1">Módulo 2 — Gestión de Turnos y Citas</h2>
+            <p>Fila virtual en el centro de vacunación.</p>
+            <table>
+                <caption class="sr-only">Lista de personas en espera de turno</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Folio</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Prioridad</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col">Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaTurnos">
+                    </tbody>
+            </table>
+        </section>
+
+        <section id="mod3" class="module-section" aria-labelledby="h2-mod3">
+            <h2 id="h2-mod3" tabindex="-1">Módulo 3 — Administración de la Vacuna</h2>
+            <div class="dashboard-cards" style="grid-template-columns: 1fr 1fr; margin-bottom: 20px;">
+                <div class="card" aria-live="polite">
+                    <h3 id="invDosis">5,000</h3>
+                    <p>Dosis Disponibles (Lote MX-290)</p>
+                </div>
+                <div class="card">
+                    <h3 id="invTemp">4.2°C</h3>
+                    <p>Temperatura Red de Frío (Óptima)</p>
+                </div>
+            </div>
+            <h3>Registro de Aplicación Reciente</h3>
+            <table>
+                <caption class="sr-only">Lista de vacunas aplicadas recientemente</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Folio</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Hora</th>
+                        <th scope="col">Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaAplicacion">
+                    </tbody>
+            </table>
+        </section>
+
+        <section id="mod4" class="module-section" aria-labelledby="h2-mod4">
+            <h2 id="h2-mod4" tabindex="-1">Módulo 4 — Seguimiento de Efectos Secundarios</h2>
+            <p>Monitoreo automático vía SMS a 24h, 48h y 7 días.</p>
+            <table>
+                <caption class="sr-only">Reporte de síntomas post-vacunación</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Beneficiario</th>
+                        <th scope="col">Tiempo post-vacuna</th>
+                        <th scope="col">Reporte SMS / Triaje</th>
+                        <th scope="col">Alerta</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>María López</td>
+                        <td>24 horas</td>
+                        <td>Sin síntomas</td>
+                        <td><span class="badge bg-green">Normal</span></td>
+                    </tr>
+                    <tr>
+                        <td>Juan Pérez</td>
+                        <td>48 horas</td>
+                        <td>Fiebre leve (37.8°)</td>
+                        <td><span class="badge bg-orange">Observación</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="mod5" class="module-section" aria-labelledby="h2-mod5">
+            <h2 id="h2-mod5" tabindex="-1">Módulo 5 — Comunicación y Transparencia</h2>
+            <p>Dashboard público de avance en la localidad.</p>
+            <div class="dashboard-cards">
+                <div class="card">
+                    <h3 id="dashTotal">0</h3>
+                    <p>Total Vacunados</p>
+                </div>
+                <div class="card">
+                    <h3>85%</h3>
+                    <p>Avance de la meta local</p>
+                </div>
+                <div class="card">
+                    <h3>0</h3>
+                    <p>Efectos Graves Reportados</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        let beneficiarios = [
+            { folio: 'V-001', nombre: 'Ana García', curp: 'GARA800101HDFRXX01', prioridad: 'Alta', estado: 'En espera' },
+            { folio: 'V-002', nombre: 'Carlos Ruiz', curp: 'RUIC900505MDFRXX02', prioridad: 'Normal', estado: 'En espera' }
+        ];
+        
+        let inventarioDosis = 5000;
+        let totalVacunados = 0;
+        let qrCodeInstancia = null;
+
+        // Función centralizada para anunciar cambios a lectores de pantalla
+        function anunciarLectorPantalla(mensaje) {
+            document.getElementById('aria-announcer').innerText = mensaje;
+        }
+
+        // Navegación
+        function showModule(modId, btn) {
+            document.querySelectorAll('.module-section').forEach(el => el.classList.remove('active'));
+            const seccionActiva = document.getElementById(modId);
+            seccionActiva.classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(el => {
+                el.classList.remove('active');
+                el.removeAttribute('aria-current');
+            });
+            btn.classList.add('active');
+            btn.setAttribute('aria-current', 'page');
+
+            // Mueve el foco al H2 de la nueva sección para accesibilidad
+            const titulo = seccionActiva.querySelector('h2');
+            if(titulo) titulo.focus();
+
+            if(modId === 'mod2') renderTurnos();
+            if(modId === 'mod3') renderAplicacion();
+            
+            anunciarLectorPantalla("Navegaste a " + btn.innerText);
+        }
+
+        // Registro
+        function registrarBeneficiario(e) {
+            e.preventDefault();
+            const nombre = document.getElementById('regNombre').value;
+            const curp = document.getElementById('regCurp').value;
+            const prioridad = document.getElementById('regPrioridad').value;
+            const folio = 'V-' + String(beneficiarios.length + 1).padStart(3, '0');
+
+            beneficiarios.push({
+                folio: folio, nombre: nombre, curp: curp, prioridad: prioridad, estado: 'En espera'
+            });
+
+            document.getElementById('folioGenerado').innerText = folio;
+            document.getElementById('nombreGenerado').innerText = nombre;
+
+            const qrContainer = document.getElementById('qrCodeContainer');
+            qrContainer.innerHTML = ''; 
+
+            const datosQR = `Folio: ${folio}\nNombre: ${nombre}\nCURP: ${curp}\nPrioridad: ${prioridad}`;
+            qrCodeInstancia = new QRCode(qrContainer, {
+                text: datosQR,
+                width: 150, height: 150,
+                colorDark : "#2C3E50", colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+            
+            // Inyectamos alt text al canvas/img generado por la librería para accesibilidad
+            setTimeout(() => {
+                const qrImg = qrContainer.querySelector('img');
+                if(qrImg) qrImg.setAttribute('alt', 'Código QR generado correctamente');
+            }, 100);
+
+            document.getElementById('registroForm').style.display = 'none';
+            const exitoDiv = document.getElementById('registroExito');
+            exitoDiv.style.display = 'block';
+            
+            // Foco al botón de cerrar para continuar el flujo
+            exitoDiv.querySelector('.btn-secondary').focus();
+            anunciarLectorPantalla(`Registro exitoso para ${nombre}. Su folio es ${folio}.`);
+        }
+
+        function cerrarComprobante() {
+            document.getElementById('registroForm').reset();
+            document.getElementById('registroExito').style.display = 'none';
+            document.getElementById('registroForm').style.display = 'block';
+            document.getElementById('regNombre').focus();
+            anunciarLectorPantalla("Formulario limpiado. Listo para un nuevo registro.");
+        }
+
+        // Turnos
+        function renderTurnos() {
+            const tbody = document.getElementById('tablaTurnos');
+            tbody.innerHTML = '';
+            
+            let fila = [...beneficiarios].sort((a, b) => a.prioridad === 'Alta' ? -1 : 1);
+
+            fila.forEach((b) => {
+                if(b.estado === 'En espera') {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${b.folio}</td>
+                            <td>${b.nombre}</td>
+                            <td><span class="badge ${b.prioridad === 'Alta' ? 'bg-orange' : 'bg-green'}">${b.prioridad}</span></td>
+                            <td>${b.estado}</td>
+                            <td>
+                                <button class="btn-primary" style="padding: 5px 10px; font-size: 14px;" 
+                                        aria-label="Aplicar vacuna a ${b.nombre}, folio ${b.folio}"
+                                        onclick="aplicarVacuna('${b.folio}')">Aplicar Vacuna</button>
+                            </td>
+                        </tr>
+                    `;
+                }
+            });
+        }
+
+        // Aplicación
+        function aplicarVacuna(folio) {
+            const persona = beneficiarios.find(b => b.folio === folio);
+            if(persona) {
+                persona.estado = 'Vacunado';
+                persona.timestamp = new Date().toLocaleTimeString();
+                inventarioDosis--;
+                totalVacunados++;
+                
+                document.getElementById('invDosis').innerText = inventarioDosis.toLocaleString();
+                document.getElementById('dashTotal').innerText = totalVacunados.toLocaleString();
+                
+                // Usamos confirm en lugar de alert para manejo más limpio del foco nativo
+                const msj = `Dosis registrada para ${persona.nombre}. Lote MX-290.`;
+                alert(msj);
+                anunciarLectorPantalla(msj + " Inventario actualizado.");
+                
+                renderTurnos(); 
+            }
+        }
+
+        // Tabla de aplicaciones
+        function renderAplicacion() {
+            const tbody = document.getElementById('tablaAplicacion');
+            tbody.innerHTML = '';
+            
+            beneficiarios.filter(b => b.estado === 'Vacunado').forEach(b => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${b.folio}</td>
+                        <td>${b.nombre}</td>
+                        <td>${b.timestamp}</td>
+                        <td><span class="badge bg-green">Completado</span></td>
+                    </tr>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>
